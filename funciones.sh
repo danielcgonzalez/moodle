@@ -333,6 +333,7 @@ function instalarnginx
 {
     echo "Instalando Nginx"
     # Build Nginx.conf
+    sudo chmod 666 /etc/nginx/nginx.conf
     cat <<EOF > /etc/nginx/nginx.conf
 user www-data;
 worker_processes 2;
@@ -397,6 +398,8 @@ cat <<EOF >> /etc/nginx/nginx.conf
   include /etc/nginx/sites-enabled/*;
 }
 EOF
+    sudo chmod 644 /etc/nginx/nginx.conf
+    sudo chmod 666 /etc/nginx/sites-enabled/${siteFQDN}.conf
 
     cat <<EOF >> /etc/nginx/sites-enabled/${siteFQDN}.conf
 server {
@@ -487,7 +490,7 @@ server {
 }
 EOF
     fi
-
+    sudo chmod 644 /etc/nginx/sites-enabled/${siteFQDN}.conf
 
     if [ "$httpsTermination" = "VMSS" ]; then
         ### SSL cert ###
@@ -510,7 +513,7 @@ EOF
     # Remove the default site. Moodle is the only site we want
     rm -f /etc/nginx/sites-enabled/default
     # restart Nginx
-    sudo service nginx restart 
+    sudo systemctl restart nginx
 }
 
 function configurarfail2ban

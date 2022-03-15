@@ -93,7 +93,7 @@ local1.*   /var/log/sitelogs/moodle/access.log
 local1.err   /var/log/sitelogs/moodle/error.log
 local2.*   /var/log/sitelogs/moodle/cron.log
 EOF
-    service rsyslog restart
+    sudo systemctl restart rsyslog 
 
     # Fire off moodle setup
     if [ "$httpsTermination" = "None" ]; then
@@ -231,10 +231,10 @@ EOF
    fi
 
    # Turning off services we don't need the controller running
-   service nginx stop
-   service php${PhpVer}-fpm stop
-   service varnish stop
-   service varnishncsa stop
+   sudo systemctl stop nginx
+   sudo systemctl stop php${PhpVer}-fpm
+   sudo systemctl stop varnish
+   sudo systemctl stop varnishncsa
    #service varnishlog stop
 
     # No need to run the commands below any more, as permissions & modes are already as such (no more "sudo -u www-data ...")
