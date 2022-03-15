@@ -516,7 +516,7 @@ EOF
 function configurarfail2ban
 {
     echo "Instando Fail2Ban"
-   cat <<EOF > jail.conf
+   cat <<EOF > /tmp/jail.conf
 # Fail2Ban configuration file.
 #
 # This file was composed for Debian systems from the original one
@@ -888,5 +888,5 @@ bantime  = 604800  ; 1 week
 findtime = 86400   ; 1 day
 maxretry = 5
 EOF
-sudo mv jail.conf /etc/fail2ban/jail.conf
+sudo mv /tmp/jail.conf /etc/fail2ban/jail.conf
 }
