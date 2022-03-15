@@ -12,11 +12,14 @@ httpsTermination=None
 
 . ./funciones.sh
     # borrar ficheros anteriores de tmp
-  sudo rm -rf /tmp/apt*
-  sudo rm -rf /tmp/*moodle*
+    sudo rm -rf /tmp/apt*
+    sudo rm -rf /tmp/*moodle*
     #Updating php sources
-   sudo add-apt-repository ppa:ondrej/php -y
-   sudo apt-get update
+    sudo add-apt-repository -y ppa:ondrej/php  
+    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/ppa
+    sudo apt-get -y update > /dev/null 2>&1
+    sudo apt-get -y install software-properties-common unzip unattended-upgrades fail2ban
+
 
     # if [ "$dbServerType" = "mysql" ]; then
     #   mysqlIP=$dbIP
@@ -29,9 +32,6 @@ httpsTermination=None
     # fi
 
     # make sure system does automatic updates and fail2ban
-    sudo apt-get -y update
-    sudo apt-get -y install unattended-upgrades fail2ban
-
     configurarfail2ban
 
     # create gluster, nfs or Azure Files mount point
@@ -46,18 +46,8 @@ httpsTermination=None
 
 
     export DEBIAN_FRONTEND=noninteractive
+    sudo apt-get -y  --allow-change-held-packages install rsyslog git  cifs-utils mysql-client     >> /tmp/apt3.log
 
-    sudo apt-get -y update                                                   >> /tmp/apt2.log
-    sudo apt-get -y  --allow-change-held-packages install rsyslog git        >> /tmp/apt3.log
-
-    # Azurefiles
-    sudo apt-get -y  --allow-change-held-packages install cifs-utils         >> /tmp/apt3.log
-   
-
-    # Mysql
-        sudo apt-get -y  --allow-change-held-packages install mysql-client >> /tmp/apt3.log
-    
-    
     # If its a migration flow, then mount the azure file share now.
     if [ "$isMigration" = "true" ]; then
         # On migration flow, the moodle azure file share must present before running this script.
@@ -69,12 +59,6 @@ httpsTermination=None
         setup_and_mount_azure_files_moodle_share $storageAccountName $storageAccountKey
     fi
 
-    # install pre-requisites
-    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/ppa
-    sudo apt-get -y update > /dev/null 2>&1
-    # sudo apt-get install -y --fix-missing python-software-properties unzip
-    sudo apt-get -y install software-properties-common
-    sudo apt-get -y install unzip
 
 
     # install the entire stack
