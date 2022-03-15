@@ -11,9 +11,12 @@ moodledbname=moodle
 httpsTermination=None
 
 . ./funciones.sh
-    # borrar ficheros anteriores de tmp
+    # borrar ficheros de anteriores instalaciones
     sudo rm -rf /tmp/apt*
     sudo rm -rf /tmp/*moodle*
+    sudo rm -f /etc/cron.d/moodle-cron
+    sudo rm -rf /moodle/
+
     #Updating php sources
     sudo add-apt-repository -y ppa:ondrej/php  
     sudo add-apt-repository -y ppa:ubuntu-toolchain-r/ppa
@@ -223,11 +226,7 @@ EOF
       cat <<EOF > /etc/cron.d/sql-backup
 22 02 * * * root /usr/bin/mysqldump -h $mysqlIP -u ${azuremoodledbuser} -p'${moodledbpass}' --databases ${moodledbname} | gzip > /moodle/db-backup.sql.gz
 EOF
-   elif [ "$dbServerType" = "postgres" ]; then
-      cat <<EOF > /etc/cron.d/sql-backup
-22 02 * * * root /usr/bin/pg_dump -Fc -h $postgresIP -U ${azuremoodledbuser} ${moodledbname} > /moodle/db-backup.sql
-EOF
-   #else # mssql. TODO It's missed earlier! Complete this!
+
    fi
 
    # Turning off services we don't need the controller running
