@@ -321,6 +321,7 @@ function instalarmoodle
         /usr/bin/curl -k --max-redirs 10 https://github.com/moodle/moodle/archive/'$moodleVersion'.zip -L -o moodle.zip
         /usr/bin/unzip -q moodle.zip
         /bin/mv '$moodleUnzipDir' /moodle/html/moodle
+        cp /moodle/html/moodle/config-dist.php /moodle/html/moodle/config.php
     fi
     cd /moodle
     rm -rf /moodle/tmp
@@ -328,6 +329,7 @@ function instalarmoodle
 
     chmod 755 /tmp/setup-moodle.sh
     /tmp/setup-moodle.sh >> /tmp/setupmoodle.log
+
 }
 function instalarnginx  
 {
