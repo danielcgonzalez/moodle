@@ -24,15 +24,15 @@ httpsTermination=None
     sudo apt-get -y install software-properties-common unzip unattended-upgrades fail2ban
 
 
-    # if [ "$dbServerType" = "mysql" ]; then
-    #   mysqlIP=$dbIP
-    #   mysqladminlogin=$dbadminloginazure
-    #   mysqladminpass=$dbadminpass
+    if [ "$dbServerType" = "mysql" ]; then
+      mysqlIP=$dbIP
+      mysqladminlogin=$dbadminloginazure
+      mysqladminpass=$dbadminpass
     
-    # else
-    #   echo "Invalid dbServerType ($dbServerType) given. Only 'mysql' or 'postgres' or 'mssql' is allowed. Exiting"
-    #   exit 1
-    # fi
+    else
+      echo "Invalid dbServerType ($dbServerType) given. Only 'mysql' or 'postgres' or 'mssql' is allowed. Exiting"
+      exit 1
+    fi
 
     # make sure system does automatic updates and fail2ban
     configurarfail2ban
@@ -176,34 +176,7 @@ EOF
         sed -i "23 a \$CFG->sslproxy  = 'true';" /moodle/html/moodle/config.php
     fi
 
-    if [ "$searchType" = "elastic" ]; then
-        # Set up elasticsearch plugin
-        if [ "$tikaVmIP" = "none" ]; then
-           sed -i "23 a \$CFG->forced_plugin_settings = ['search_elastic' => ['hostname' => 'http://$elasticVm1IP']];" /moodle/html/moodle/config.php
-        else
-           sed -i "23 a \$CFG->forced_plugin_settings = ['search_elastic' => ['hostname' => 'http://$elasticVm1IP', 'fileindexing' => 'true', 'tikahostname' => 'http://$tikaVmIP', 'tikaport' => '9998'],];" /moodle/html/moodle/config.php
-        fi
-
-        sed -i "23 a \$CFG->searchengine = 'elastic';" /moodle/html/moodle/config.php
-        sed -i "23 a \$CFG->enableglobalsearch = 'true';" /moodle/html/moodle/config.php
-        # create index
-        php /moodle/html/moodle/search/cli/indexer.php --force --reindex
-
-    elif [ "$searchType" = "azure" ]; then
-        # Set up Azure Search service plugin
-        if [ "$tikaVmIP" = "none" ]; then
-           sed -i "23 a \$CFG->forced_plugin_settings = ['search_azure' => ['searchurl' => 'https://$azureSearchNameHost', 'apikey' => '$azureSearchKey']];" /moodle/html/moodle/config.php
-        else
-           sed -i "23 a \$CFG->forced_plugin_settings = ['search_azure' => ['searchurl' => 'https://$azureSearchNameHost', 'apikey' => '$azureSearchKey', 'fileindexing' => '1', 'tikahostname' => 'http://$tikaVmIP', 'tikaport' => '9998'],];" /moodle/html/moodle/config.php
-        fi
-
-        sed -i "23 a \$CFG->searchengine = 'azure';" /moodle/html/moodle/config.php
-        sed -i "23 a \$CFG->enableglobalsearch = 'true';" /moodle/html/moodle/config.php
-        # create index
-        php /moodle/html/moodle/search/cli/indexer.php --force --reindex
-
-    fi
-
+ 
     if [ "$installObjectFsSwitch" = "true" ]; then
         # Set the ObjectFS alternate filesystem
         sed -i "23 a \$CFG->alternative_file_system_class = '\\\tool_objectfs\\\azure_file_system';" /moodle/html/moodle/config.php
@@ -248,46 +221,46 @@ EOF
     sudo chmod +r /moodle/html/moodle/config.php
 
 
-   if [ $fileServerType = "azurefiles" ]; then
-      if [ "$isMigration" = "true" ]; then
-        echo -e '\n\rIts a migration flow, the moodle content is already on azure file share\n\r'
-      else
-         # Delayed copy of moodle installation to the Azure Files share
+#    if [ $fileServerType = "azurefiles" ]; then
+#       if [ "$isMigration" = "true" ]; then
+#         echo -e '\n\rIts a migration flow, the moodle content is already on azure file share\n\r'
+#       else
+#          # Delayed copy of moodle installation to the Azure Files share
 
-         # First rename moodle directory to something else
-         mv /moodle /moodle_old_delete_me
-         # Then create the moodle share
-         echo -e '\n\rCreating an Azure Files share for moodle'
-         create_azure_files_moodle_share $storageAccountName $storageAccountKey /tmp/wabs.log $fileServerDiskSize
-         # Set up and mount Azure Files share. Must be done after nginx is installed because of www-data user/group
-         echo -e '\n\rSetting up and mounting Azure Files share on //'$storageAccountName'.file.core.windows.net/moodle on /moodle\n\r'
-         setup_and_mount_azure_files_moodle_share $storageAccountName $storageAccountKey
-         # Move the local installation over to the Azure Files
-         echo -e '\n\rMoving locally installed moodle over to Azure Files'
+#          # First rename moodle directory to something else
+#          mv /moodle /moodle_old_delete_me
+#          # Then create the moodle share
+#          echo -e '\n\rCreating an Azure Files share for moodle'
+#          create_azure_files_moodle_share $storageAccountName $storageAccountKey /tmp/wabs.log $fileServerDiskSize
+#          # Set up and mount Azure Files share. Must be done after nginx is installed because of www-data user/group
+#          echo -e '\n\rSetting up and mounting Azure Files share on //'$storageAccountName'.file.core.windows.net/moodle on /moodle\n\r'
+#          setup_and_mount_azure_files_moodle_share $storageAccountName $storageAccountKey
+#          # Move the local installation over to the Azure Files
+#          echo -e '\n\rMoving locally installed moodle over to Azure Files'
 
-         # install azcopy
-         wget -q -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azcopy_v10.tar.gz --strip-components=1 && mv ./azcopy /usr/bin/
+#          # install azcopy
+#          wget -q -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azcopy_v10.tar.gz --strip-components=1 && mv ./azcopy /usr/bin/
       
-         ACCOUNT_KEY="$storageAccountKey"
-         NAME="$storageAccountName"
-         END=`date -u -d "60 minutes" '+%Y-%m-%dT%H:%M:00Z'`
+#          ACCOUNT_KEY="$storageAccountKey"
+#          NAME="$storageAccountName"
+#          END=`date -u -d "60 minutes" '+%Y-%m-%dT%H:%M:00Z'`
 
-         sas=$(az storage share generate-sas \
-           -n moodle \
-           --account-key $ACCOUNT_KEY \
-           --account-name $NAME \
-           --https-only \
-           --permissions lrw \
-           --expiry $END -o tsv)
+#          sas=$(az storage share generate-sas \
+#            -n moodle \
+#            --account-key $ACCOUNT_KEY \
+#            --account-name $NAME \
+#            --https-only \
+#            --permissions lrw \
+#            --expiry $END -o tsv)
 
-         export AZCOPY_CONCURRENCY_VALUE='48'
-         export AZCOPY_BUFFER_GB='4'
+#          export AZCOPY_CONCURRENCY_VALUE='48'
+#          export AZCOPY_BUFFER_GB='4'
 
-         # cp -a /moodle_old_delete_me/* /moodle || true # Ignore case sensitive directory copy failure
-         azcopy --log-level ERROR copy "/moodle_old_delete_me/*" "https://$NAME.file.core.windows.net/moodle?$sas" --recursive || true # Ignore case sensitive directory copy failure
-         rm -rf /moodle_old_delete_me || true # Keep the files just in case
-      fi
-   fi
+#          # cp -a /moodle_old_delete_me/* /moodle || true # Ignore case sensitive directory copy failure
+#          azcopy --log-level ERROR copy "/moodle_old_delete_me/*" "https://$NAME.file.core.windows.net/moodle?$sas" --recursive || true # Ignore case sensitive directory copy failure
+#          rm -rf /moodle_old_delete_me || true # Keep the files just in case
+#       fi
+#    fi
 
 #    create_last_modified_time_update_script
 #    run_once_last_modified_time_update_script
