@@ -275,19 +275,19 @@ function instalarphp
     # php config 
     #PhpVer='/usr/bin/php -r "echo PHP_VERSION;" | /usr/bin/cut -c 1,2,3'
     PhpIni=/etc/php/${PhpVer}/fpm/php.ini
-    sed -i "s/memory_limit.*/memory_limit = 512M/" $PhpIni
-    sed -i "s/max_execution_time.*/max_execution_time = 18000/" $PhpIni
-    sed -i "s/max_input_vars.*/max_input_vars = 100000/" $PhpIni
-    sed -i "s/max_input_time.*/max_input_time = 600/" $PhpIni
-    sed -i "s/upload_max_filesize.*/upload_max_filesize = 1024M/" $PhpIni
-    sed -i "s/post_max_size.*/post_max_size = 1056M/" $PhpIni
-    sed -i "s/;opcache.use_cwd.*/opcache.use_cwd = 1/" $PhpIni
-    sed -i "s/;opcache.validate_timestamps.*/opcache.validate_timestamps = 1/" $PhpIni
-    sed -i "s/;opcache.save_comments.*/opcache.save_comments = 1/" $PhpIni
-    sed -i "s/;opcache.enable_file_override.*/opcache.enable_file_override = 0/" $PhpIni
-    sed -i "s/;opcache.enable.*/opcache.enable = 1/" $PhpIni
-    sed -i "s/;opcache.memory_consumption.*/opcache.memory_consumption = 256/" $PhpIni
-    sed -i "s/;opcache.max_accelerated_files.*/opcache.max_accelerated_files = 8000/" $PhpIni
+    sudo sed -i "s/memory_limit.*/memory_limit = 512M/" $PhpIni
+    sudo sed -i "s/max_execution_time.*/max_execution_time = 18000/" $PhpIni
+    sudo sed -i "s/max_input_vars.*/max_input_vars = 100000/" $PhpIni
+    sudo sed -i "s/max_input_time.*/max_input_time = 600/" $PhpIni
+    sudo sed -i "s/upload_max_filesize.*/upload_max_filesize = 1024M/" $PhpIni
+    sudo sed -i "s/post_max_size.*/post_max_size = 1056M/" $PhpIni
+    sudo sed -i "s/;opcache.use_cwd.*/opcache.use_cwd = 1/" $PhpIni
+    sudo sed -i "s/;opcache.validate_timestamps.*/opcache.validate_timestamps = 1/" $PhpIni
+    sudo sed -i "s/;opcache.save_comments.*/opcache.save_comments = 1/" $PhpIni
+    sudo sed -i "s/;opcache.enable_file_override.*/opcache.enable_file_override = 0/" $PhpIni
+    sudo sed -i "s/;opcache.enable.*/opcache.enable = 1/" $PhpIni
+    sudo sed -i "s/;opcache.memory_consumption.*/opcache.memory_consumption = 256/" $PhpIni
+    sudo sed -i "s/;opcache.max_accelerated_files.*/opcache.max_accelerated_files = 8000/" $PhpIni
 
      # fpm config - overload this 
    cat <<EOF > /etc/php/${PhpVer}/fpm/pool.d/www.conf
