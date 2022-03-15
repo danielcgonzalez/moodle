@@ -5,9 +5,10 @@ function configurarvarnish
     echo "Instalando Varnish"
     # Configure varnish startup for 16.04
    VARNISHSTART="ExecStart=\/usr\/sbin\/varnishd -j unix,user=vcache -F -a :80 -T localhost:6082 -f \/etc\/varnish\/moodle.vcl -S \/etc\/varnish\/secret -s malloc,1024m -p thread_pool_min=200 -p thread_pool_max=4000 -p thread_pool_add_delay=2 -p timeout_linger=100 -p timeout_idle=30 -p send_timeout=1800 -p thread_pools=4 -p http_max_hdr=512 -p workspace_backend=512k"
-   sed -i "s/^ExecStart.*/${VARNISHSTART}/" /lib/systemd/system/varnish.service
+   sudo sed -i "s/^ExecStart.*/${VARNISHSTART}/" /lib/systemd/system/varnish.service
 
    # Configure varnish VCL for moodle
+   sudo chmod  666  /etc/varnish/moodle.vcl
    cat <<EOF >> /etc/varnish/moodle.vcl
 vcl 4.0;
 
@@ -250,6 +251,7 @@ sub vcl_synth {
     }
 }
 EOF
+    sudo chmod  666  /etc/varnish/moodle.vcl
 
     # Restart Varnish
     sudo systemctl daemon-reload

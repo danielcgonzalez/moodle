@@ -247,10 +247,6 @@ EOF
     sudo chown -R www-data.www-data /moodle/moodledata /moodle/certs
     sudo chmod +r /moodle/html/moodle/config.php
 
-    # chmod /moodle for Azure NetApp Files (its default is 770!)
-    if [ $fileServerType = "nfs-byo" ]; then
-        sudo chmod +rx /moodle
-    fi
 
    if [ $fileServerType = "azurefiles" ]; then
       if [ "$isMigration" = "true" ]; then
@@ -293,8 +289,8 @@ EOF
       fi
    fi
 
-   create_last_modified_time_update_script
-   run_once_last_modified_time_update_script
+#    create_last_modified_time_update_script
+#    run_once_last_modified_time_update_script
 
    echo "### Script End `date`###"
 
