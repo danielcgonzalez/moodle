@@ -2,6 +2,7 @@
 
 function configurarvarnish
 {
+    echo "Instalando Varnish"
     # Configure varnish startup for 16.04
    VARNISHSTART="ExecStart=\/usr\/sbin\/varnishd -j unix,user=vcache -F -a :80 -T localhost:6082 -f \/etc\/varnish\/moodle.vcl -S \/etc\/varnish\/secret -s malloc,1024m -p thread_pool_min=200 -p thread_pool_max=4000 -p thread_pool_add_delay=2 -p timeout_linger=100 -p timeout_idle=30 -p send_timeout=1800 -p thread_pools=4 -p http_max_hdr=512 -p workspace_backend=512k"
    sed -i "s/^ExecStart.*/${VARNISHSTART}/" /lib/systemd/system/varnish.service
@@ -258,6 +259,7 @@ EOF
 
 function instalarphp
 {
+    echo "Instando PHP"
     # passing php versions $PhpVer
     sudo apt-get -y   --allow-change-held-packages install nginx php$PhpVer-fpm varnish >> /tmp/apt5a.log
     sudo apt-get -y   --allow-change-held-packages install php$PhpVer php$PhpVer-cli php$PhpVer-curl php$PhpVer-zip >> /tmp/apt5b.log
@@ -304,6 +306,7 @@ EOF
 }
 function instalarmoodle
 {
+    echo "Instalando Moodle"
     if [[ "$moodleVersion" =~ v([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
         moodleUnzipDir="moodle-${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
     else
@@ -328,6 +331,7 @@ function instalarmoodle
 }
 function instalarnginx  
 {
+    echo "Instalando Nginx"
     # Build Nginx.conf
     cat <<EOF > /etc/nginx/nginx.conf
 user www-data;
@@ -511,6 +515,7 @@ EOF
 
 function configurarfail2ban
 {
+    echo "Instando Fail2Ban"
    cat <<EOF > jail.conf
 # Fail2Ban configuration file.
 #
