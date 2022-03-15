@@ -33,6 +33,7 @@ httpsTermination=None
     configurarfail2ban
 
     # create gluster, nfs or Azure Files mount point
+    echo "creando estructura"
     sudo mkdir -p /moodle
     sudo chown -R $USER:$USER /moodle
 
