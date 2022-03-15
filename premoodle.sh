@@ -11,7 +11,9 @@ moodledbname=moodle
 httpsTermination=None
 
 . ./funciones.sh
-  
+    # borrar ficheros anteriores de tmp
+  sudo rm -rf /tmp/apt*
+  sudo rm -rf /tmp/*moodle*
     #Updating php sources
    sudo add-apt-repository ppa:ondrej/php -y
    sudo apt-get update
