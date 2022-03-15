@@ -55,7 +55,6 @@ httpsTermination=None
         sudo apt-get -y  --allow-change-held-packages install mysql-client >> /tmp/apt3.log
     
     
-
     # If its a migration flow, then mount the azure file share now.
     if [ "$isMigration" = "true" ]; then
         # On migration flow, the moodle azure file share must present before running this script.
