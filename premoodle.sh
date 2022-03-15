@@ -2,7 +2,7 @@
 
 PhpVer=7.4
 # moodleVersion=MOODLE_311_STABLE
-moodleVersion=3.11.5
+moodleVersion=v3.11.5
 siteFQDN=www.prueba.com
 thumbprintSslCert=None
 moodledbname=moodle
