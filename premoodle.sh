@@ -235,7 +235,6 @@ EOF
    sudo systemctl stop php${PhpVer}-fpm
    sudo systemctl stop varnish
    sudo systemctl stop varnishncsa
-   #service varnishlog stop
 
     # No need to run the commands below any more, as permissions & modes are already as such (no more "sudo -u www-data ...")
     # Leaving this code as a remark that we are explicitly leaving the ownership to root:root
