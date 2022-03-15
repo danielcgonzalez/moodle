@@ -252,8 +252,8 @@ sub vcl_synth {
 EOF
 
     # Restart Varnish
-    systemctl daemon-reload
-    service varnish restart
+    sudo systemctl daemon-reload
+    sudo systemctl restart varnish
 
 }
 
